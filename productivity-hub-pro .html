@@ -1,0 +1,2555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Productivity Hub Pro</title>
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlByb2R1Y3Rpdml0eSBIdWIgUHJvIiwKICAic2hvcnRfbmFtZSI6ICJQcm9kSHViIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwYTBhMGEiLAogICJ0aGVtZV9jb2xvciI6ICIjMWExYTFhIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJyUzRSUzQ3JlY3Qgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnIGZpbGw9JyM0YTllZmYnLyUzRSUzQ3RleHQgeD0nNTAnIHk9JzUwJyBmb250LXNpemU9JzUwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZScgZHk9Jy4zNWVtJyUzRVAlM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --bg-hover: #3a3a3a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-muted: #888;
+            --accent: #4a9eff;
+            --accent-hover: #3a8eef;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #ef4444;
+            --border: #2a2a2a;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --bg-tertiary: #e5e5e5;
+            --bg-hover: #d5d5d5;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-muted: #6a6a6a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --border: #d5d5d5;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--bg-hover);
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 12px;
+            white-space: nowrap;
+            border-radius: 6px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            margin-bottom: 8px;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 24px var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
+        }
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.warning { border-left: 4px solid var(--warning); }
+        .toast.info { border-left: 4px solid var(--accent); }
+
+        .toast-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 20px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .toast-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* Modal System */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalIn 0.3s ease;
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 24px;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Confirm Dialog */
+        .confirm-dialog .modal {
+            max-width: 400px;
+        }
+
+        .confirm-message {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px var(--shadow);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border);
+        }
+
+        .login-box h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .login-box p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Main App */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+        }
+
+        .logout-btn {
+            padding: 8px 20px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: var(--bg-hover);
+        }
+
+        .nav-bar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            overflow-x: auto;
+            padding: 0 20px;
+            position: sticky;
+            top: 61px;
+            z-index: 99;
+        }
+
+        .nav-item {
+            padding: 16px 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .content {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeInSection 0.3s ease;
+        }
+
+        @keyframes fadeInSection {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .section-header h2 {
+            font-size: 28px;
+            color: var(--text-primary);
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .add-btn {
+            padding: 10px 24px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-description {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--bg-hover);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .card-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .card-btn {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .card-btn:hover {
+            background: var(--bg-hover);
+        }
+
+        .card-btn.danger {
+            color: var(--danger);
+        }
+
+        .card-btn.danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        /* Task specific */
+        .task-card {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-checkbox:hover {
+            border-color: var(--accent);
+        }
+
+        .task-checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-content.completed .card-title {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* Priority badges */
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .priority-medium {
+            background: rgba(251, 191, 36, 0.2);
+            color: var(--warning);
+        }
+
+        .priority-low {
+            background: rgba(74, 158, 255, 0.2);
+            color: var(--accent);
+        }
+
+        /* Pomodoro Timer */
+        .pomodoro-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .timer-display {
+            font-size: 72px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 30px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-label {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .timer-btn {
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timer-btn.start {
+            background: var(--success);
+            color: white;
+        }
+
+        .timer-btn.start:hover {
+            background: #22c55e;
+        }
+
+        .timer-btn.pause {
+            background: var(--warning);
+            color: white;
+        }
+
+        .timer-btn.pause:hover {
+            background: #f59e0b;
+        }
+
+        .timer-btn.reset {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .timer-btn.reset:hover {
+            background: var(--bg-hover);
+        }
+
+        .timer-settings {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+        }
+
+        .timer-setting {
+            text-align: center;
+        }
+
+        .timer-setting label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .timer-setting input {
+            width: 100%;
+            padding: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* File Manager */
+        .file-toolbar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .file-breadcrumb {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .file-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-item:hover {
+            border-color: var(--accent);
+            background: var(--bg-tertiary);
+        }
+
+        .file-item.selected {
+            border-color: var(--accent);
+            background: rgba(74, 158, 255, 0.1);
+        }
+
+        .file-icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .file-name {
+            font-size: 13px;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        .file-size {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px var(--shadow);
+            display: none;
+            z-index: 10000;
+            min-width: 180px;
+            padding: 8px;
+        }
+
+        .context-menu-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .context-menu-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .context-menu-item.danger {
+            color: var(--danger);
+        }
+
+        .context-menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        /* Keyboard Shortcuts Help */
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .shortcut-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .shortcut-keys {
+            display: flex;
+            gap: 4px;
+        }
+
+        .key {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+            color: var(--text-primary);
+        }
+
+        /* Auto-save indicator */
+        .save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px var(--shadow);
+            z-index: 1000;
+        }
+
+        .save-indicator.saving {
+            display: flex;
+        }
+
+        .save-indicator.saved {
+            display: flex;
+            color: var(--success);
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .section-header h2 {
+                font-size: 22px;
+            }
+
+            .timer-display {
+                font-size: 56px;
+            }
+
+            .file-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .shortcuts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toast-container {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+
+            .toast {
+                min-width: auto;
+            }
+
+            .modal {
+                max-width: none;
+                margin: 0;
+            }
+        }
+
+        /* PWA Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 16px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 -4px 12px var(--shadow);
+            z-index: 1000;
+        }
+
+        .install-prompt.show {
+            display: flex;
+        }
+
+        .install-prompt-content {
+            flex: 1;
+        }
+
+        .install-prompt-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .install-prompt-text {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .install-prompt-actions {
+            display: flex;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Save Indicator -->
+    <div class="save-indicator" id="saveIndicator">
+        <div class="spinner"></div>
+        <span id="saveText">Saving...</span>
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-prompt-content">
+            <div class="install-prompt-title">Install Productivity Hub</div>
+            <div class="install-prompt-text">Install this app for a better experience</div>
+        </div>
+        <div class="install-prompt-actions">
+            <button class="btn btn-small btn-secondary" onclick="dismissInstallPrompt()">Later</button>
+            <button class="btn btn-small" onclick="installPWA()">Install</button>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <h1>Welcome Back</h1>
+            <p>Sign in to access your productivity hub</p>
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+            </div>
+            <button class="btn btn-full" onclick="login()">Sign In</button>
+            <div class="error-message" id="loginError">Invalid credentials</div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Header -->
+        <div class="header">
+            <h1>Productivity Hub Pro</h1>
+            <div class="header-actions">
+                <button class="theme-toggle tooltip" data-tooltip="Toggle Theme" onclick="toggleTheme()" id="themeToggle">
+                    🌙
+                </button>
+                <button class="btn btn-small btn-secondary" onclick="showKeyboardShortcuts()">
+                    ⌨️ Shortcuts
+                </button>
+                <button class="btn btn-small btn-secondary" onclick="exportData()">
+                    ⬇️ Export
+                </button>
+                <button class="btn btn-small btn-secondary" onclick="document.getElementById('importFile').click()">
+                    ⬆️ Import
+                </button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <div class="nav-item active" onclick="switchSection('routines')">Routines</div>
+            <div class="nav-item" onclick="switchSection('tasks')">Tasks</div>
+            <div class="nav-item" onclick="switchSection('notes')">Notes</div>
+            <div class="nav-item" onclick="switchSection('journal')">Journal</div>
+            <div class="nav-item" onclick="switchSection('pomodoro')">Pomodoro</div>
+            <div class="nav-item" onclick="switchSection('files')">Files</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Routines Section -->
+            <div id="routines" class="section active">
+                <div class="section-header">
+                    <h2>Routines</h2>
+                    <button class="add-btn" onclick="showAddRoutineModal()">
+                        ➕ Add Routine
+                    </button>
+                </div>
+                <div id="routinesList"></div>
+            </div>
+
+            <!-- Tasks Section -->
+            <div id="tasks" class="section">
+                <div class="section-header">
+                    <h2>Tasks</h2>
+                    <button class="add-btn" onclick="showAddTaskModal()">
+                        ➕ Add Task
+                    </button>
+                </div>
+                <div id="tasksList"></div>
+            </div>
+
+            <!-- Notes Section -->
+            <div id="notes" class="section">
+                <div class="section-header">
+                    <h2>Notes</h2>
+                    <button class="add-btn" onclick="showAddNoteModal()">
+                        ➕ Add Note
+                    </button>
+                </div>
+                <div id="notesList"></div>
+            </div>
+
+            <!-- Journal Section -->
+            <div id="journal" class="section">
+                <div class="section-header">
+                    <h2>Journal</h2>
+                    <button class="add-btn" onclick="showAddJournalModal()">
+                        ➕ New Entry
+                    </button>
+                </div>
+                <div id="journalList"></div>
+            </div>
+
+            <!-- Pomodoro Section -->
+            <div id="pomodoro" class="section">
+                <div class="section-header">
+                    <h2>Pomodoro Timer</h2>
+                </div>
+                <div class="pomodoro-container">
+                    <div class="timer-label" id="timerLabel">Focus Time</div>
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn start" id="startBtn" onclick="startTimer()">Start</button>
+                        <button class="timer-btn pause" id="pauseBtn" onclick="pauseTimer()" style="display: none;">Pause</button>
+                        <button class="timer-btn reset" onclick="resetTimer()">Reset</button>
+                    </div>
+                    <div class="timer-settings">
+                        <div class="timer-setting">
+                            <label>Focus (min)</label>
+                            <input type="number" id="focusTime" value="25" min="1" max="60" onchange="updateTimerSettings()">
+                        </div>
+                        <div class="timer-setting">
+                            <label>Short Break (min)</label>
+                            <input type="number" id="shortBreak" value="5" min="1" max="30" onchange="updateTimerSettings()">
+                        </div>
+                        <div class="timer-setting">
+                            <label>Long Break (min)</label>
+                            <input type="number" id="longBreak" value="15" min="1" max="60" onchange="updateTimerSettings()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Files Section -->
+            <div id="files" class="section">
+                <div class="section-header">
+                    <h2>File Manager</h2>
+                </div>
+                <div class="file-toolbar">
+                    <button class="btn btn-small" onclick="createFolder()">📁 New Folder</button>
+                    <button class="btn btn-small" onclick="document.getElementById('fileUpload').click()">📤 Upload</button>
+                    <input type="file" id="fileUpload" multiple style="display: none;" onchange="uploadFiles(event)">
+                    <button class="btn btn-small btn-secondary" id="renameBtn" onclick="renameItem()" disabled>✏️ Rename</button>
+                    <button class="btn btn-small btn-secondary" id="cutBtn" onclick="cutItem()" disabled>✂️ Cut</button>
+                    <button class="btn btn-small btn-secondary" id="copyBtn" onclick="copyItem()" disabled>📋 Copy</button>
+                    <button class="btn btn-small btn-secondary" id="pasteBtn" onclick="pasteItem()" disabled>📌 Paste</button>
+                    <button class="btn btn-small btn-danger" id="deleteBtn" onclick="deleteItem()" disabled>🗑️ Delete</button>
+                </div>
+                <div class="file-breadcrumb" id="breadcrumb">/ Home</div>
+                <div class="file-grid" id="fileGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlayClick(event)"></div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="renameFromContext()">✏️ Rename</div>
+        <div class="context-menu-item" onclick="cutFromContext()">✂️ Cut</div>
+        <div class="context-menu-item" onclick="copyFromContext()">📋 Copy</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item danger" onclick="deleteFromContext()">🗑️ Delete</div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentSection = 'routines';
+        let selectedItem = null;
+        let clipboard = null;
+        let clipboardAction = null;
+        let currentPath = '';
+        let timerInterval = null;
+        let timerSeconds = 1500; // 25 minutes
+        let timerRunning = false;
+        let timerMode = 'focus'; // focus, shortBreak, longBreak
+        let pomodoroCount = 0;
+        let deferredPrompt = null;
+
+        // Toast System
+        function showToast(message, type = 'info', title = '') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[type]}</div>
+                <div class="toast-content">
+                    ${title ? `<div class="toast-title">${title}</div>` : ''}
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // Save Indicator
+        function showSaveIndicator(saved = false) {
+            const indicator = document.getElementById('saveIndicator');
+            const text = document.getElementById('saveText');
+            
+            if (saved) {
+                indicator.className = 'save-indicator saved';
+                text.textContent = 'Saved ✓';
+                setTimeout(() => {
+                    indicator.className = 'save-indicator';
+                }, 2000);
+            } else {
+                indicator.className = 'save-indicator saving';
+                text.textContent = 'Saving...';
+            }
+        }
+
+        // Modal System
+        function showModal(title, body, footer = '') {
+            const overlay = document.getElementById('modalOverlay');
+            const existingModal = overlay.querySelector('.modal');
+            if (existingModal) existingModal.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-header">
+                    <div class="modal-title">${title}</div>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <div class="modal-body">${body}</div>
+                ${footer ? `<div class="modal-footer">${footer}</div>` : ''}
+            `;
+            
+            overlay.appendChild(modal);
+            overlay.classList.add('active');
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('modalOverlay');
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                const modal = overlay.querySelector('.modal');
+                if (modal) modal.remove();
+            }, 200);
+        }
+
+        function closeModalOnOverlayClick(event) {
+            if (event.target === event.currentTarget) {
+                closeModal();
+            }
+        }
+
+        // Confirm Dialog
+        function confirm(message, onConfirm, onCancel = null) {
+            const body = `<div class="confirm-message">${message}</div>`;
+            const footer = `
+                <button class="btn btn-secondary" onclick="closeModal(); ${onCancel ? onCancel : ''}">Cancel</button>
+                <button class="btn btn-danger" onclick="closeModal(); (${onConfirm})()">Confirm</button>
+            `;
+            showModal('Confirm Action', body, footer);
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const icon = document.getElementById('themeToggle');
+            icon.textContent = newTheme === 'light' ? '🌙' : '☀️';
+            
+            showToast(`Switched to ${newTheme} theme`, 'success');
+        }
+
+        // Initialize theme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const icon = document.getElementById('themeToggle');
+            icon.textContent = savedTheme === 'light' ? '🌙' : '☀️';
+        }
+
+        // Export/Import Data
+        function exportData() {
+            const data = {
+                routines: JSON.parse(localStorage.getItem('routines') || '[]'),
+                tasks: JSON.parse(localStorage.getItem('tasks') || '[]'),
+                notes: JSON.parse(localStorage.getItem('notes') || '[]'),
+                journal: JSON.parse(localStorage.getItem('journal') || '[]'),
+                files: JSON.parse(localStorage.getItem('files') || '[]'),
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `productivity-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Data exported successfully', 'success', 'Export Complete');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.routines) localStorage.setItem('routines', JSON.stringify(data.routines));
+                    if (data.tasks) localStorage.setItem('tasks', JSON.stringify(data.tasks));
+                    if (data.notes) localStorage.setItem('notes', JSON.stringify(data.notes));
+                    if (data.journal) localStorage.setItem('journal', JSON.stringify(data.journal));
+                    if (data.files) localStorage.setItem('files', JSON.stringify(data.files));
+                    
+                    loadRoutines();
+                    loadTasks();
+                    loadNotes();
+                    loadJournal();
+                    loadFileManager();
+                    
+                    showToast('Data imported successfully', 'success', 'Import Complete');
+                } catch (error) {
+                    showToast('Failed to import data. Invalid file format.', 'error', 'Import Failed');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K: Show keyboard shortcuts
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                showKeyboardShortcuts();
+            }
+            
+            // Ctrl/Cmd + N: New item based on current section
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                switch(currentSection) {
+                    case 'routines': showAddRoutineModal(); break;
+                    case 'tasks': showAddTaskModal(); break;
+                    case 'notes': showAddNoteModal(); break;
+                    case 'journal': showAddJournalModal(); break;
+                }
+            }
+            
+            // Ctrl/Cmd + E: Export data
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                exportData();
+            }
+            
+            // Ctrl/Cmd + T: Toggle theme
+            if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+                e.preventDefault();
+                toggleTheme();
+            }
+            
+            // Escape: Close modal
+            if (e.key === 'Escape') {
+                closeModal();
+                const contextMenu = document.getElementById('contextMenu');
+                contextMenu.style.display = 'none';
+            }
+            
+            // Number keys 1-6: Switch sections
+            if (e.altKey && e.key >= '1' && e.key <= '6') {
+                e.preventDefault();
+                const sections = ['routines', 'tasks', 'notes', 'journal', 'pomodoro', 'files'];
+                switchSection(sections[parseInt(e.key) - 1]);
+            }
+        });
+
+        function showKeyboardShortcuts() {
+            const shortcuts = [
+                { label: 'Show shortcuts', keys: ['Ctrl/Cmd', 'K'] },
+                { label: 'New item', keys: ['Ctrl/Cmd', 'N'] },
+                { label: 'Export data', keys: ['Ctrl/Cmd', 'E'] },
+                { label: 'Toggle theme', keys: ['Ctrl/Cmd', 'T'] },
+                { label: 'Close modal', keys: ['Esc'] },
+                { label: 'Switch to Routines', keys: ['Alt', '1'] },
+                { label: 'Switch to Tasks', keys: ['Alt', '2'] },
+                { label: 'Switch to Notes', keys: ['Alt', '3'] },
+                { label: 'Switch to Journal', keys: ['Alt', '4'] },
+                { label: 'Switch to Pomodoro', keys: ['Alt', '5'] },
+                { label: 'Switch to Files', keys: ['Alt', '6'] }
+            ];
+            
+            const body = `
+                <div class="shortcuts-grid">
+                    ${shortcuts.map(s => `
+                        <div class="shortcut-item">
+                            <span class="shortcut-label">${s.label}</span>
+                            <div class="shortcut-keys">
+                                ${s.keys.map(k => `<span class="key">${k}</span>`).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            showModal('⌨️ Keyboard Shortcuts', body);
+        }
+
+        // PWA Installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install prompt after 30 seconds
+            setTimeout(() => {
+                const installPrompt = document.getElementById('installPrompt');
+                if (!localStorage.getItem('pwaInstallDismissed')) {
+                    installPrompt.classList.add('show');
+                }
+            }, 30000);
+        });
+
+        function installPWA() {
+            if (!deferredPrompt) return;
+            
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    showToast('App installed successfully!', 'success', 'Installation Complete');
+                }
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.remove('show');
+            });
+        }
+
+        function dismissInstallPrompt() {
+            document.getElementById('installPrompt').classList.remove('show');
+            localStorage.setItem('pwaInstallDismissed', 'true');
+        }
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'productivity-hub-v1';
+                    self.addEventListener('install', (e) => {
+                        self.skipWaiting();
+                    });
+                    self.addEventListener('activate', (e) => {
+                        e.waitUntil(clients.claim());
+                    });
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(
+                            caches.match(e.request).then(response => response || fetch(e.request))
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl);
+            });
+        }
+
+        // Authentication
+        function initApp() {
+            const loggedIn = localStorage.getItem('loggedIn');
+            if (loggedIn === 'true') {
+                showApp();
+            }
+            initTheme();
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (username === 'admin' && password === 'admin') {
+                localStorage.setItem('loggedIn', 'true');
+                showApp();
+                showToast('Welcome back!', 'success', 'Login Successful');
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            confirm('Are you sure you want to logout?', () => {
+                localStorage.setItem('loggedIn', 'false');
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('appContainer').style.display = 'none';
+                showToast('Logged out successfully', 'info', 'Goodbye');
+            });
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            loadRoutines();
+            loadTasks();
+            loadNotes();
+            loadJournal();
+            loadFileManager();
+            requestNotificationPermission();
+            setInterval(checkReminders, 60000);
+        }
+
+        // Section Switching
+        function switchSection(section) {
+            currentSection = section;
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(section).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Routines
+        function loadRoutines() {
+            const routines = JSON.parse(localStorage.getItem('routines') || '[]');
+            const container = document.getElementById('routinesList');
+            
+            if (routines.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎯</div>
+                        <div class="empty-state-title">No routines yet</div>
+                        <div class="empty-state-description">Create your first routine to stay on track</div>
+                        <button class="btn" onclick="showAddRoutineModal()">➕ Add Routine</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = routines.map(routine => `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">${routine.title}</div>
+                            <div class="card-meta">
+                                ${routine.time ? `<span>⏰ ${routine.time}</span>` : ''}
+                                <span>📅 ${getScheduleText(routine)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">${routine.description || 'No description'}</div>
+                    <div class="card-actions">
+                        <button class="card-btn danger" onclick="deleteRoutine(${routine.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddRoutineModal() {
+            const body = `
+                <div class="input-group">
+                    <label>Title</label>
+                    <input type="text" id="routineTitle" placeholder="Enter routine title">
+                </div>
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea id="routineDescription" placeholder="Enter description (optional)"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Time</label>
+                    <input type="time" id="routineTime">
+                </div>
+                <div class="input-group">
+                    <label>Schedule</label>
+                    <select id="routineSchedule">
+                        <option value="daily">Daily</option>
+                        <option value="weekdays">Weekdays</option>
+                        <option value="weekends">Weekends</option>
+                        <option value="specific-days">Specific Days</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="saveRoutine()">Save Routine</button>
+            `;
+            
+            showModal('➕ Add Routine', body, footer);
+        }
+
+        function saveRoutine() {
+            const title = document.getElementById('routineTitle').value;
+            const description = document.getElementById('routineDescription').value;
+            const time = document.getElementById('routineTime').value;
+            const scheduleType = document.getElementById('routineSchedule').value;
+            
+            if (!title) {
+                showToast('Please enter a title', 'error', 'Validation Error');
+                return;
+            }
+            
+            const routines = JSON.parse(localStorage.getItem('routines') || '[]');
+            routines.push({
+                id: Date.now(),
+                title,
+                description,
+                time,
+                scheduleType
+            });
+            
+            showSaveIndicator();
+            localStorage.setItem('routines', JSON.stringify(routines));
+            setTimeout(() => showSaveIndicator(true), 500);
+            
+            loadRoutines();
+            closeModal();
+            showToast('Routine created successfully', 'success');
+        }
+
+        function deleteRoutine(id) {
+            confirm('Delete this routine?', () => {
+                let routines = JSON.parse(localStorage.getItem('routines') || '[]');
+                routines = routines.filter(r => r.id !== id);
+                localStorage.setItem('routines', JSON.stringify(routines));
+                loadRoutines();
+                showToast('Routine deleted', 'info');
+            });
+        }
+
+        // Tasks
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            const container = document.getElementById('tasksList');
+            
+            if (tasks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✅</div>
+                        <div class="empty-state-title">No tasks yet</div>
+                        <div class="empty-state-description">Add your first task to get started</div>
+                        <button class="btn" onclick="showAddTaskModal()">➕ Add Task</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = tasks.map(task => `
+                <div class="card task-card">
+                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
+                    <div class="task-content ${task.completed ? 'completed' : ''}">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">${task.title}</div>
+                                <div class="card-meta">
+                                    ${task.priority ? `<span class="priority-badge priority-${task.priority}">${task.priority}</span>` : ''}
+                                    ${task.dueDate ? `<span>📅 ${task.dueDate}</span>` : ''}
+                                    ${task.reminderTime ? `<span>⏰ ${task.reminderTime}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        ${task.description ? `<div class="card-content">${task.description}</div>` : ''}
+                        <div class="card-actions">
+                            <button class="card-btn danger" onclick="deleteTask(${task.id})">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddTaskModal() {
+            const body = `
+                <div class="input-group">
+                    <label>Title</label>
+                    <input type="text" id="taskTitle" placeholder="Enter task title">
+                </div>
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea id="taskDescription" placeholder="Enter description (optional)"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Priority</label>
+                    <select id="taskPriority">
+                        <option value="">None</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Due Date</label>
+                    <input type="date" id="taskDueDate">
+                </div>
+                <div class="input-group">
+                    <label>Reminder Time</label>
+                    <input type="time" id="taskReminderTime">
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="saveTask()">Save Task</button>
+            `;
+            
+            showModal('➕ Add Task', body, footer);
+        }
+
+        function saveTask() {
+            const title = document.getElementById('taskTitle').value;
+            const description = document.getElementById('taskDescription').value;
+            const priority = document.getElementById('taskPriority').value;
+            const dueDate = document.getElementById('taskDueDate').value;
+            const reminderTime = document.getElementById('taskReminderTime').value;
+            
+            if (!title) {
+                showToast('Please enter a title', 'error', 'Validation Error');
+                return;
+            }
+            
+            const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            tasks.push({
+                id: Date.now(),
+                title,
+                description,
+                priority,
+                dueDate,
+                reminderTime,
+                completed: false
+            });
+            
+            showSaveIndicator();
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            setTimeout(() => showSaveIndicator(true), 500);
+            
+            loadTasks();
+            closeModal();
+            showToast('Task created successfully', 'success');
+        }
+
+        function toggleTask(id) {
+            let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            loadTasks();
+            
+            const task = tasks.find(t => t.id === id);
+            if (task.completed) {
+                showToast('Task completed! 🎉', 'success');
+            }
+        }
+
+        function deleteTask(id) {
+            confirm('Delete this task?', () => {
+                let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+                tasks = tasks.filter(t => t.id !== id);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                loadTasks();
+                showToast('Task deleted', 'info');
+            });
+        }
+
+        // Notes
+        function loadNotes() {
+            const notes = JSON.parse(localStorage.getItem('notes') || '[]');
+            const container = document.getElementById('notesList');
+            
+            if (notes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <div class="empty-state-title">No notes yet</div>
+                        <div class="empty-state-description">Capture your thoughts and ideas</div>
+                        <button class="btn" onclick="showAddNoteModal()">➕ Add Note</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = notes.map(note => `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">${note.title}</div>
+                            <div class="card-meta">
+                                <span>📅 ${new Date(note.date).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">${note.content}</div>
+                    <div class="card-actions">
+                        <button class="card-btn danger" onclick="deleteNote(${note.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddNoteModal() {
+            const body = `
+                <div class="input-group">
+                    <label>Title</label>
+                    <input type="text" id="noteTitle" placeholder="Enter note title">
+                </div>
+                <div class="input-group">
+                    <label>Content</label>
+                    <textarea id="noteContent" placeholder="Enter note content" style="min-height: 200px;"></textarea>
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="saveNote()">Save Note</button>
+            `;
+            
+            showModal('➕ Add Note', body, footer);
+        }
+
+        function saveNote() {
+            const title = document.getElementById('noteTitle').value;
+            const content = document.getElementById('noteContent').value;
+            
+            if (!title || !content) {
+                showToast('Please fill in all fields', 'error', 'Validation Error');
+                return;
+            }
+            
+            const notes = JSON.parse(localStorage.getItem('notes') || '[]');
+            notes.push({
+                id: Date.now(),
+                title,
+                content,
+                date: new Date().toISOString()
+            });
+            
+            showSaveIndicator();
+            localStorage.setItem('notes', JSON.stringify(notes));
+            setTimeout(() => showSaveIndicator(true), 500);
+            
+            loadNotes();
+            closeModal();
+            showToast('Note saved successfully', 'success');
+        }
+
+        function deleteNote(id) {
+            confirm('Delete this note?', () => {
+                let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+                notes = notes.filter(n => n.id !== id);
+                localStorage.setItem('notes', JSON.stringify(notes));
+                loadNotes();
+                showToast('Note deleted', 'info');
+            });
+        }
+
+        // Journal
+        function loadJournal() {
+            const journal = JSON.parse(localStorage.getItem('journal') || '[]');
+            const container = document.getElementById('journalList');
+            
+            if (journal.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📔</div>
+                        <div class="empty-state-title">No journal entries yet</div>
+                        <div class="empty-state-description">Start journaling to reflect on your day</div>
+                        <button class="btn" onclick="showAddJournalModal()">➕ New Entry</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = journal.map(entry => `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">${entry.title}</div>
+                            <div class="card-meta">
+                                <span>📅 ${new Date(entry.date).toLocaleDateString()}</span>
+                                ${entry.mood ? `<span>😊 ${entry.mood}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">${entry.content}</div>
+                    <div class="card-actions">
+                        <button class="card-btn danger" onclick="deleteJournal(${entry.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddJournalModal() {
+            const body = `
+                <div class="input-group">
+                    <label>Title</label>
+                    <input type="text" id="journalTitle" placeholder="Enter entry title">
+                </div>
+                <div class="input-group">
+                    <label>Mood</label>
+                    <select id="journalMood">
+                        <option value="">Select mood (optional)</option>
+                        <option value="Great">Great</option>
+                        <option value="Good">Good</option>
+                        <option value="Okay">Okay</option>
+                        <option value="Not Great">Not Great</option>
+                        <option value="Bad">Bad</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Entry</label>
+                    <textarea id="journalContent" placeholder="What's on your mind?" style="min-height: 250px;"></textarea>
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="saveJournal()">Save Entry</button>
+            `;
+            
+            showModal('➕ New Journal Entry', body, footer);
+        }
+
+        function saveJournal() {
+            const title = document.getElementById('journalTitle').value;
+            const mood = document.getElementById('journalMood').value;
+            const content = document.getElementById('journalContent').value;
+            
+            if (!title || !content) {
+                showToast('Please fill in all required fields', 'error', 'Validation Error');
+                return;
+            }
+            
+            const journal = JSON.parse(localStorage.getItem('journal') || '[]');
+            journal.push({
+                id: Date.now(),
+                title,
+                mood,
+                content,
+                date: new Date().toISOString()
+            });
+            
+            showSaveIndicator();
+            localStorage.setItem('journal', JSON.stringify(journal));
+            setTimeout(() => showSaveIndicator(true), 500);
+            
+            loadJournal();
+            closeModal();
+            showToast('Journal entry saved', 'success');
+        }
+
+        function deleteJournal(id) {
+            confirm('Delete this journal entry?', () => {
+                let journal = JSON.parse(localStorage.getItem('journal') || '[]');
+                journal = journal.filter(j => j.id !== id);
+                localStorage.setItem('journal', JSON.stringify(journal));
+                loadJournal();
+                showToast('Journal entry deleted', 'info');
+            });
+        }
+
+        // Pomodoro Timer
+        function startTimer() {
+            if (timerRunning) return;
+            
+            timerRunning = true;
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'inline-flex';
+            
+            timerInterval = setInterval(() => {
+                if (timerSeconds > 0) {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    completeTimer();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            timerRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('startBtn').style.display = 'inline-flex';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            const focusTime = parseInt(document.getElementById('focusTime').value);
+            timerSeconds = focusTime * 60;
+            timerMode = 'focus';
+            pomodoroCount = 0;
+            updateTimerDisplay();
+            document.getElementById('timerLabel').textContent = 'Focus Time';
+        }
+
+        function completeTimer() {
+            pauseTimer();
+            
+            if (timerMode === 'focus') {
+                pomodoroCount++;
+                showToast('Focus session complete! Take a break.', 'success', 'Well Done! 🎉');
+                
+                if (pomodoroCount % 4 === 0) {
+                    // Long break
+                    timerMode = 'longBreak';
+                    const longBreak = parseInt(document.getElementById('longBreak').value);
+                    timerSeconds = longBreak * 60;
+                    document.getElementById('timerLabel').textContent = 'Long Break';
+                } else {
+                    // Short break
+                    timerMode = 'shortBreak';
+                    const shortBreak = parseInt(document.getElementById('shortBreak').value);
+                    timerSeconds = shortBreak * 60;
+                    document.getElementById('timerLabel').textContent = 'Short Break';
+                }
+            } else {
+                // Break complete, back to focus
+                showToast('Break over! Ready to focus?', 'info', 'Time to Work');
+                timerMode = 'focus';
+                const focusTime = parseInt(document.getElementById('focusTime').value);
+                timerSeconds = focusTime * 60;
+                document.getElementById('timerLabel').textContent = 'Focus Time';
+            }
+            
+            updateTimerDisplay();
+            
+            // Notification
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Pomodoro Timer', {
+                    body: timerMode === 'focus' ? 'Time to focus!' : 'Time for a break!',
+                    icon: '⏱️'
+                });
+            }
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function updateTimerSettings() {
+            if (!timerRunning) {
+                const focusTime = parseInt(document.getElementById('focusTime').value);
+                timerSeconds = focusTime * 60;
+                updateTimerDisplay();
+            }
+        }
+
+        // File Manager
+        function loadFileManager() {
+            const files = JSON.parse(localStorage.getItem('files') || '[]');
+            const currentFiles = files.filter(f => (f.path || '') === currentPath);
+            const container = document.getElementById('fileGrid');
+            
+            // Update breadcrumb
+            document.getElementById('breadcrumb').textContent = currentPath || '/ Home';
+            
+            if (currentFiles.length === 0 && !currentPath) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">📁</div>
+                        <div class="empty-state-title">No files yet</div>
+                        <div class="empty-state-description">Upload files or create folders</div>
+                        <button class="btn" onclick="document.getElementById('fileUpload').click()">📤 Upload Files</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            // Add back button if not at root
+            if (currentPath) {
+                html += `
+                    <div class="file-item" onclick="navigateUp()">
+                        <div class="file-icon">⬆️</div>
+                        <div class="file-name">..</div>
+                    </div>
+                `;
+            }
+            
+            // Add files and folders
+            html += currentFiles.map(file => `
+                <div class="file-item ${selectedItem?.id === file.id ? 'selected' : ''}" 
+                     onclick="selectItem(${file.id})" 
+                     ondblclick="${file.type === 'folder' ? `navigateToFolder('${file.name}')` : `downloadFile(${file.id})`}"
+                     oncontextmenu="showContextMenu(event, ${file.id})">
+                    <div class="file-icon">${file.type === 'folder' ? '📁' : getFileIcon(file.name)}</div>
+                    <div class="file-name">${file.name}</div>
+                    ${file.size ? `<div class="file-size">${formatFileSize(file.size)}</div>` : ''}
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+            updateToolbarButtons();
+        }
+
+        function selectItem(id) {
+            const files = JSON.parse(localStorage.getItem('files') || '[]');
+            selectedItem = files.find(f => f.id === id);
+            loadFileManager();
+        }
+
+        function navigateToFolder(name) {
+            currentPath = currentPath ? `${currentPath}/${name}` : name;
+            selectedItem = null;
+            loadFileManager();
+        }
+
+        function navigateUp() {
+            const parts = currentPath.split('/');
+            parts.pop();
+            currentPath = parts.join('/');
+            selectedItem = null;
+            loadFileManager();
+        }
+
+        function updateToolbarButtons() {
+            const hasSelection = selectedItem !== null;
+            const hasClipboard = clipboard !== null;
+            
+            document.getElementById('renameBtn').disabled = !hasSelection;
+            document.getElementById('cutBtn').disabled = !hasSelection;
+            document.getElementById('copyBtn').disabled = !hasSelection;
+            document.getElementById('pasteBtn').disabled = !hasClipboard;
+            document.getElementById('deleteBtn').disabled = !hasSelection;
+        }
+
+        function createFolder() {
+            const body = `
+                <div class="input-group">
+                    <label>Folder Name</label>
+                    <input type="text" id="folderName" placeholder="Enter folder name">
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="saveFolderCreate()">Create</button>
+            `;
+            
+            showModal('📁 Create Folder', body, footer);
+        }
+
+        function saveFolderCreate() {
+            const name = document.getElementById('folderName').value;
+            if (!name) {
+                showToast('Please enter a folder name', 'error');
+                return;
+            }
+            
+            const files = JSON.parse(localStorage.getItem('files') || '[]');
+            files.push({
+                id: Date.now(),
+                name,
+                type: 'folder',
+                path: currentPath,
+                created: new Date().toISOString()
+            });
+            
+            localStorage.setItem('files', JSON.stringify(files));
+            loadFileManager();
+            closeModal();
+            showToast('Folder created', 'success');
+        }
+
+        function uploadFiles(event) {
+            const fileList = event.target.files;
+            const files = JSON.parse(localStorage.getItem('files') || '[]');
+            
+            Array.from(fileList).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    files.push({
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        type: 'file',
+                        size: file.size,
+                        path: currentPath,
+                        data: e.target.result,
+                        created: new Date().toISOString()
+                    });
+                    localStorage.setItem('files', JSON.stringify(files));
+                    loadFileManager();
+                    showToast(`${file.name} uploaded`, 'success');
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            event.target.value = '';
+        }
+
+        function renameItem() {
+            if (!selectedItem) return;
+            
+            const body = `
+                <div class="input-group">
+                    <label>New Name</label>
+                    <input type="text" id="newName" value="${selectedItem.name}">
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="saveRename()">Rename</button>
+            `;
+            
+            showModal('✏️ Rename', body, footer);
+        }
+
+        function saveRename() {
+            const newName = document.getElementById('newName').value;
+            if (!newName || newName === selectedItem.name) {
+                closeModal();
+                return;
+            }
+            
+            let files = JSON.parse(localStorage.getItem('files') || '[]');
+            files = files.map(f => f.id === selectedItem.id ? {...f, name: newName} : f);
+            localStorage.setItem('files', JSON.stringify(files));
+            
+            selectedItem = null;
+            loadFileManager();
+            closeModal();
+            showToast('Item renamed', 'success');
+        }
+
+        function deleteItem() {
+            if (!selectedItem) return;
+            
+            confirm(`Delete ${selectedItem.name}?`, () => {
+                let files = JSON.parse(localStorage.getItem('files') || '[]');
+                
+                if (selectedItem.type === 'folder') {
+                    const folderPath = currentPath + '/' + selectedItem.name;
+                    files = files.filter(f => !f.path?.startsWith(folderPath) && f.id !== selectedItem.id);
+                } else {
+                    files = files.filter(f => f.id !== selectedItem.id);
+                }
+                
+                localStorage.setItem('files', JSON.stringify(files));
+                selectedItem = null;
+                loadFileManager();
+                showToast('Item deleted', 'info');
+            });
+        }
+
+        function cutItem() {
+            if (!selectedItem) return;
+            clipboard = selectedItem;
+            clipboardAction = 'cut';
+            updateToolbarButtons();
+            showToast('Item cut to clipboard', 'info');
+        }
+
+        function copyItem() {
+            if (!selectedItem) return;
+            clipboard = selectedItem;
+            clipboardAction = 'copy';
+            updateToolbarButtons();
+            showToast('Item copied to clipboard', 'info');
+        }
+
+        function pasteItem() {
+            if (!clipboard) return;
+            
+            let files = JSON.parse(localStorage.getItem('files') || '[]');
+            
+            if (clipboardAction === 'cut') {
+                files = files.map(f => f.id === clipboard.id ? {...f, path: currentPath} : f);
+            } else if (clipboardAction === 'copy') {
+                const newItem = {
+                    ...clipboard,
+                    id: Date.now(),
+                    path: currentPath,
+                    name: clipboard.name + ' (copy)'
+                };
+                files.push(newItem);
+            }
+            
+            localStorage.setItem('files', JSON.stringify(files));
+            clipboard = null;
+            clipboardAction = null;
+            loadFileManager();
+            showToast('Item pasted', 'success');
+        }
+
+        function downloadFile(id) {
+            const files = JSON.parse(localStorage.getItem('files') || '[]');
+            const file = files.find(f => f.id === id);
+            if (!file || file.type === 'folder') return;
+
+            const link = document.createElement('a');
+            link.href = file.data;
+            link.download = file.name;
+            link.click();
+            showToast(`${file.name} downloaded`, 'success');
+        }
+
+        function showContextMenu(event, id) {
+            event.preventDefault();
+            selectItem(id);
+            
+            const menu = document.getElementById('contextMenu');
+            menu.style.display = 'block';
+            menu.style.left = event.pageX + 'px';
+            menu.style.top = event.pageY + 'px';
+        }
+
+        function renameFromContext() {
+            document.getElementById('contextMenu').style.display = 'none';
+            renameItem();
+        }
+
+        function cutFromContext() {
+            document.getElementById('contextMenu').style.display = 'none';
+            cutItem();
+        }
+
+        function copyFromContext() {
+            document.getElementById('contextMenu').style.display = 'none';
+            copyItem();
+        }
+
+        function deleteFromContext() {
+            document.getElementById('contextMenu').style.display = 'none';
+            deleteItem();
+        }
+
+        // Helper functions
+        function getScheduleText(routine) {
+            switch(routine.scheduleType) {
+                case 'daily': return 'Daily';
+                case 'weekdays': return 'Weekdays';
+                case 'weekends': return 'Weekends';
+                case 'specific-days': return 'Specific Days';
+                case 'monthly': return 'Monthly';
+                default: return '';
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+                pdf: '📄', doc: '📝', docx: '📝', txt: '📝',
+                jpg: '🖼️', jpeg: '🖼️', png: '🖼️', gif: '🖼️',
+                mp4: '🎥', mov: '🎥', avi: '🎥',
+                mp3: '🎵', wav: '🎵',
+                zip: '📦', rar: '📦',
+                xlsx: '📊', xls: '📊', csv: '📊'
+            };
+            return icons[ext] || '📄';
+        }
+
+        // Notification system
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showToast('Notifications enabled', 'success');
+                    }
+                });
+            }
+        }
+
+        function checkReminders() {
+            if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+            const routines = JSON.parse(localStorage.getItem('routines') || '[]');
+            const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            const now = new Date();
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const today = now.toISOString().split('T')[0];
+
+            tasks.forEach(task => {
+                if (!task.reminderTime || task.completed) return;
+                if (task.dueDate !== today) return;
+                if (task.reminderTime !== currentTime) return;
+
+                const lastNotified = localStorage.getItem(`notified_task_${task.id}`);
+                if (lastNotified !== today) {
+                    new Notification('Task Reminder', {
+                        body: task.title,
+                        icon: '✓'
+                    });
+                    localStorage.setItem(`notified_task_${task.id}`, today);
+                }
+            });
+        }
+
+        // Hide context menu on click outside
+        document.addEventListener('click', () => {
+            document.getElementById('contextMenu').style.display = 'none';
+        });
+
+        // Initialize app
+        initApp();
+    </script>
+</body>
+</html>
